@@ -31,7 +31,6 @@ function CodeEditor() {
             settings: {
               caret: '#c6c6c6',
               fontFamily: 'monospace',
-
             },
             styles: [
               { tag: t.comment, color: '#6272a4', fontSize: "1" },

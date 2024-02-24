@@ -24,7 +24,7 @@ const initialState: CompilerSliceStateType = {
 </body>
 </html>
 `,
-        css: `body: {
+        css: `body {
      /* Write your code... */
 }`,
         javascript: `document.addEventListener("DOMContentLoaded", function() {
@@ -46,6 +46,9 @@ const compilerSlice = createSlice({
         updateCodeValue: (state, action: PayloadAction<string>) => {
             state.fullCode[state.currentLanguage] = action.payload;
         },
+        updateFullCode: (state, action: PayloadAction<CompilerSliceStateType["fullCode"]>) => {
+            state.fullCode = action.payload
+        },
 
     }
 })
@@ -55,4 +58,5 @@ export default compilerSlice.reducer
 export const {
     updateCurrentLanguage,
     updateCodeValue,
+    updateFullCode,
 } = compilerSlice.actions

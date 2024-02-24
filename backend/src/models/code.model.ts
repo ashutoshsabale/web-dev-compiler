@@ -7,7 +7,7 @@ interface IcodeSchema {
         javascript: string
     };
     title: string;
-    ownerInfo: mongoose.Types.ObjectId | string;
+    ownerId: mongoose.Types.ObjectId | string;
     ownerName: string;
 }
 
@@ -21,7 +21,7 @@ const codeSchema = new mongoose.Schema<IcodeSchema>({
         type: String,
         required: true,
     },
-    ownerInfo: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    ownerId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ownerName: String
 }, {timestamps: true});
 

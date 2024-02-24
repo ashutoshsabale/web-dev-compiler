@@ -16,9 +16,11 @@ app.use(cookieParser())
 
 // Routes
 import userRouter from "./routes/user.routes"
+import compilerRouter from "./routes/compiler.routes"
 
 // Routes declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/compiler", compilerRouter)
 
 
 export { app }
