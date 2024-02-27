@@ -1,6 +1,6 @@
 // This middleware is  for checking if the user has a valid session.
 
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response, json } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken"
@@ -14,7 +14,7 @@ export interface AuthRequest extends Request {
 
 export const verifyJWT = asyncHandler( async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        const token = req.cookies?.accessToken || (req.header("Authorization")?.replace("Bearer ", "") ?? "");
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
 
         if(!token) throw new ApiError(401, "Unauthorized request");
 
@@ -31,6 +31,8 @@ export const verifyJWT = asyncHandler( async (req: AuthRequest, res: Response, n
         req.user = user
         next()
     } catch (error) {
-        throw new ApiError(401, "Invalid access token")
+        return res
+        .status(401)
+        .json( new ApiError(401, "Unauthorized request" ))
     }
 })

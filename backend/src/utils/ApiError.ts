@@ -13,14 +13,23 @@ class ApiError extends Error {
         super(message);
         this.statusCode= statusCode;
         this.data= null;
-        this.success= false;
         this.errors= errors;
+        this.success= false;
 
         if(stack){
             this.stack= stack;
         } else{
             Error.captureStackTrace(this,this.constructor);
         }
+
+    }
+    toJSON() {
+        return {
+            statusCode: this.statusCode,
+            message: this.message, // Include the message property
+            errors: this.errors,
+            success: this.success
+        };
     }
 }
 

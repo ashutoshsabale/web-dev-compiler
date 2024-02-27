@@ -16,8 +16,8 @@ const generateAccessAndRefreshTokens = async (userId: string): Promise<{
 
         const accessToken = user.generateAccessToken();
         const refreshToken = user.refreshTokenGenerator();
-        console.log("refreshToken is: ", refreshToken)
-        console.log("accessToken is: ", accessToken)
+        // console.log("refreshToken is: ", refreshToken)
+        // console.log("accessToken is: ", accessToken)
 
         user.refreshToken = refreshToken;
         await user?.save({ validateBeforeSave: false });
@@ -31,6 +31,8 @@ const generateAccessAndRefreshTokens = async (userId: string): Promise<{
 
 const registerUser = asyncHandler( async (req: Request, res: Response) => {
     const { username, email, password } = req.body
+    const data = req.body
+    console.log("Data from body: ", data)
     console.log("Email: ", email);
 
     if([username, email, password].some(field => field?.trim() == "")){
@@ -52,7 +54,9 @@ const registerUser = asyncHandler( async (req: Request, res: Response) => {
     }
 
     // handling files
-    const avatarLocalPath: string | undefined = (req.files as { [fieldname: string]: Express.Multer.File[] })?.avatar?.[0]?.path;
+    const avatarLocalPath: string | undefined = (req.file as Express.Multer.File)?.path;
+
+    console.log("Files is: ",req.file)
 
     console.log("file pathis : ", avatarLocalPath)
 
@@ -95,7 +99,7 @@ const registerUser = asyncHandler( async (req: Request, res: Response) => {
 const loginUser = asyncHandler( async (req: Request, res: Response) => {
 
     const { username, email, password } = req.body
-    console.log(email);
+
     if(!username && !email){
         throw new ApiError(400, "Username or Email is required.");
     }
@@ -118,13 +122,26 @@ const loginUser = asyncHandler( async (req: Request, res: Response) => {
     // to make modifiable only from server not from frontend
     const options = {
         httpOnly: true,
-        secure: true
+        // secure: true,
+        sameSite: "lax",
+        path: "/"
     }
+    console.log("refresh token after login is: ", refreshToken);
 
     return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        // secure: true,
+        sameSite: "lax",
+        path: "/"
+    })
+    .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        // secure: true,
+        sameSite: "lax",
+        path: "/"
+    })
     .json(
         new ApiResponse(
             200,

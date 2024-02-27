@@ -1,25 +1,47 @@
-import { Route, Routes } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "./components/Header.tsx"
-import Home from "./pages/Home.tsx"
-import Compiler from "./pages/Compiler.tsx"
-import NotFound from "./pages/NotFound.tsx"
 import { Toaster } from "./components/ui/sonner.tsx"
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
+import { updateCurrentUser, updateLoggedInUser } from "./store/slices/authSlice.ts"
+import AllRoutes from "./routes/all.routes.tsx"
+
 
 function App() {
+    const dispatch = useDispatch();
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/v1/users/current-user",{
+                method: "GET",
+                credentials: "include"
+            });
+            const result = await response.json();
+            // console.log("current user is: ", result);
+            if(response.ok) {
+                dispatch(updateLoggedInUser(true));
+                dispatch(updateCurrentUser(result.data));
+            } else {
+                dispatch(updateLoggedInUser(false))
+                throw result.message
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(()=> {
+        getCurrentUser();
+    },[])
+
     return (
-        <>
+        <div className="w-[100dvw] h-[100dvh]">
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 <Header />
-                <Routes>
-                    <Route path="/" element={<Home/>} />
-                    <Route path="/compiler" element={<Compiler/>}/>
-                    <Route path="/compiler/:postId" element={<Compiler/>}/>
-                    <Route path="*" element={<NotFound/>}/>
-                </Routes>
+                <AllRoutes />
                 <Toaster />
             </ThemeProvider>
-        </>
+        </div>
     )
 }
 

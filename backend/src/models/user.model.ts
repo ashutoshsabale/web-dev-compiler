@@ -37,7 +37,6 @@ const userSchema = new mongoose.Schema<IUserSchema>({
     },
     avatar: {
         type: String,
-        default: "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
     },
     savedCodes: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -59,7 +58,6 @@ userSchema.methods.isPasswordCorrect = async function(this: IUserSchema, passwor
 }
 
 userSchema.methods.generateAccessToken = function(this: IUserSchema):string {
-    console.log("We are in generate access token")
     return jwt.sign(
         {
             _id: this._id,
@@ -74,7 +72,6 @@ userSchema.methods.generateAccessToken = function(this: IUserSchema):string {
 }
 
 userSchema.methods.refreshTokenGenerator = function(this: IUserSchema):string {
-    console.log("We are in generate refresh token")
     return jwt.sign(
         {
             _id: this._id,

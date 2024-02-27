@@ -6,9 +6,7 @@ import { verifyJWT } from "../middlewares/auth.middleware";
 const router = Router();
 
 router.route("/register").post(
-    upload.fields([  //signle for one file and fields for multiple files
-        { name: "avatar", maxCount: 1 },
-    ]),
+    upload.single('avatar'), // use fields for multiple file uploads
     registerUser
 );
 
