@@ -31,8 +31,6 @@ const generateAccessAndRefreshTokens = async (userId: string): Promise<{
 
 const registerUser = asyncHandler( async (req: Request, res: Response) => {
     const { username, email, password } = req.body
-    const data = req.body
-    console.log("Data from body: ", data)
     console.log("Email: ", email);
 
     if([username, email, password].some(field => field?.trim() == "")){
@@ -55,8 +53,6 @@ const registerUser = asyncHandler( async (req: Request, res: Response) => {
 
     // handling files
     const avatarLocalPath: string | undefined = (req.file as Express.Multer.File)?.path;
-
-    console.log("Files is: ",req.file)
 
     console.log("file pathis : ", avatarLocalPath)
 

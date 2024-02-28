@@ -9,6 +9,8 @@ interface IcodeSchema {
     title: string;
     ownerId: mongoose.Types.ObjectId | string;
     ownerName: string;
+    description: string;
+    template: string;
 }
 
 const codeSchema = new mongoose.Schema<IcodeSchema>({
@@ -20,6 +22,13 @@ const codeSchema = new mongoose.Schema<IcodeSchema>({
     title: {
         type: String,
         required: true,
+    },
+    template: {
+        type: String
+    },
+    description: {
+        type: String,
+        required: true
     },
     ownerId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     ownerName: String

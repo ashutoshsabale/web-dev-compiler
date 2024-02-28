@@ -35,13 +35,13 @@ function App() {
     },[])
 
     return (
-        <div className="w-[100dvw] h-[100dvh]">
+        <>
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 <Header />
                 <AllRoutes />
                 <Toaster />
             </ThemeProvider>
-        </div>
+        </>
     )
 }
 
