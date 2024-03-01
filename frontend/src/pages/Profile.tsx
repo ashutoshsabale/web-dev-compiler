@@ -1,20 +1,34 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Mail, User } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { updateCurrentUser, updateLoggedInUser } from "@/store/slices/authSlice";
 
 export default function ProfilePage() {
     const [imagePreview, setImagePreview] = useState<string>("");
+    const [username, setUsername] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
-    const [loading, setLoading] = useState<boolean>(false)
+    const [avatarLoading, setAvatarLoading] = useState<boolean>(false)
+    const [userUpdateLoading, setUserUpdateLoading] = useState<boolean>(false)
+    const [changePassLoading, setChangePassLoading] = useState<boolean>(false)
+    const [oldPassword, setOldPassword] = useState<string>("");
+    const [newPassword, setNewPassword] = useState<string>("");
+    const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
 
     const userAvatar = useSelector((state: RootState) => state.authSlice.currentUser?.avatar)
+    const userUsername = useSelector((state: RootState) => state.authSlice.currentUser?.username)
+    const userEmail = useSelector((state: RootState) => state.authSlice.currentUser?.email)
+
     const dispatch = useDispatch()
+
+    useEffect(()=>{
+        getCurrentUser()
+    },[])
 
     const getCurrentUser = async () => {
         try {
@@ -27,6 +41,9 @@ export default function ProfilePage() {
             if(response.ok) {
                 dispatch(updateLoggedInUser(true));
                 dispatch(updateCurrentUser(result?.data));
+                // setUsername(result?.data.username)
+                // setEmail(result?.data.email)
+                console.log("User fetched")
             } else {
                 dispatch(updateLoggedInUser(false))
                 throw result.message
@@ -44,7 +61,7 @@ export default function ProfilePage() {
                 return;
             }
 
-            setLoading(true);
+            setAvatarLoading(true);
             const fileData = new FormData();
             fileData.append("avatar", avatarFile);
 
@@ -57,7 +74,7 @@ export default function ProfilePage() {
             const result = await response.json()
 
             if(response.ok){
-                setLoading(false)
+                setAvatarLoading(false)
                 getCurrentUser();
                 toast.success(`Profile picture updated successfully`);
             } else {
@@ -65,8 +82,70 @@ export default function ProfilePage() {
             }
         } catch (error) {
             console.log("Avatar update ka error: ", error)
+        }  finally {
+            setAvatarLoading(false)
         }
     }
+
+    const handleUsernameEmailUpdate = async () => {
+        try {
+            setUserUpdateLoading(true)
+            const resposne = await fetch("http://localhost:8000/api/v1/users/update-account",{
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username, email}),
+                credentials: "include"
+            })
+
+            const result = await resposne.json();
+
+            if(resposne.ok){
+                setUserUpdateLoading(false);
+                toast.success("Username and password updated successfully")
+                getCurrentUser();
+            } else {
+                toast.error(result.message)
+            }
+        } catch (error) {
+            console.log("Username or email updation ka error")
+        } finally {
+            setUserUpdateLoading(false)
+        }
+    }
+
+    const handleChangePassword = async () => {
+        try {
+            setChangePassLoading(true);
+            if(oldPassword === "" || newPassword === "" || confirmNewPassword ===""){
+                toast.warning("All fields are required");
+                return
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                toast.error("New passwords do not match");
+                return;
+            }
+
+            const response = await fetch("http://localhost:8000/api/v1/users/change-current-password", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ oldPassword, newPassword }),
+                credentials: "include"
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setChangePassLoading(false);
+                toast.success("Password changed successfully");
+            } else {
+                toast.error(result.message);
+            }
+        } catch (error) {
+            console.log("Error changing password:", error);
+        } finally {
+            setChangePassLoading(false);
+        }
+    };
 
     // Function to handle file input change
     const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -89,6 +168,10 @@ export default function ProfilePage() {
                     Update your profile information. Changes will be reflected across the
                     platform.
                 </p>
+                <div className="flex gap-10 pt-3 text-gray-600">
+                    <p className="flex items-center gap-1"><User size={16}/> {userUsername}</p>
+                    <p className="flex items-center gap-1"><Mail size={16}/> {userEmail}</p>
+                </div>
             </div>
 
             <div className="flex items-center space-x-44 py-10 border-b-2">
@@ -121,7 +204,7 @@ export default function ProfilePage() {
 
                     <div className="flex flex-col">
                         <Button onClick={handleAvatar}>
-                            {!loading ? <>Upload</> : <span className="flex gap-1 justify-center items-center"><Loader2Icon className="animate-spin" size={16} />{" "} Uploading</span>}
+                            {!avatarLoading ? <>Upload</> : <span className="flex gap-1 justify-center items-center"><Loader2Icon className="animate-spin" size={16} />{" "} Uploading</span>}
                         </Button>
                     </div>
                 </div>
@@ -136,6 +219,8 @@ export default function ProfilePage() {
                             className="dark:bg-gray-800 dark:text-gray-50 w-[250px]"
                             id="username"
                             placeholder="Enter your username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
@@ -145,11 +230,15 @@ export default function ProfilePage() {
                             id="email"
                             placeholder="Enter your email"
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                 </div>
                 <div>
-                    <Button>Update</Button>
+                    <Button onClick={handleUsernameEmailUpdate}>
+                        {!userUpdateLoading ? <>Update</> : <span className="flex gap-1 justify-center items-center"><Loader2Icon className="animate-spin" size={16} />{" "} Updating</span>}
+                    </Button>
                 </div>
             </div>
 
@@ -162,6 +251,9 @@ export default function ProfilePage() {
                         id="old-password"
                         placeholder="Enter your old password"
                         type="password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        required
                     />
                 </div>
                 <div className=" flex space-x-24">
@@ -172,6 +264,9 @@ export default function ProfilePage() {
                             id="password"
                             placeholder="Enter your new password"
                             type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="space-y-2">
@@ -181,11 +276,16 @@ export default function ProfilePage() {
                             id="new-password"
                             placeholder="Confirm your new password"
                             type="password"
+                            value={confirmNewPassword}
+                            onChange={(e) => setConfirmNewPassword(e.target.value)}
+                            required
                         />
                     </div>
                 </div>
                 <div>
-                    <Button>Change password</Button>
+                    <Button onClick={handleChangePassword}>
+                        {!changePassLoading ? <>Change password</> : <span className="flex gap-1 justify-center items-center"><Loader2Icon className="animate-spin" size={16} />{" "} Changing Password</span>}
+                    </Button>
                 </div>
             </div>
         </div>

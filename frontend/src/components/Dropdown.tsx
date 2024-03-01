@@ -51,7 +51,7 @@ const Dropdown =  () => {
         <DropdownMenu>
           <DropdownMenuTrigger >
                 <Avatar className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                    <AvatarImage src={currentUser?.avatar} />
+                    <AvatarImage className="object-cover w-full h-full" src={currentUser?.avatar} />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
           </DropdownMenuTrigger>
