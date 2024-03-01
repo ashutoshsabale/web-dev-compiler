@@ -2,12 +2,12 @@ import { User, AtSign, FileText, Loader2, Trash2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
-import { Skeleton } from './ui/skeleton';
+import { Button } from '../components/ui/button';
+import { Skeleton } from '../components/ui/skeleton';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-const UserProfilePage = () => {
+const MyCodesPage = () => {
     const loggedInUser = useSelector((state: RootState) => state.authSlice.currentUser)
     const [savedCodeList, setSavedCodeList] = useState<{ template: string, title: string, description: string, _id: string }[]>([])
     const [loading, setLoading] = useState<boolean>(false)
@@ -76,7 +76,7 @@ const UserProfilePage = () => {
                     )
                 }
                 <div className='flex flex-col gap-2'>
-                    <h2 className="text-white text-4xl font-semibold">{loggedInUser?.username || "Username"}</h2>
+                    <h2 className="text-white text-4xl font-extrabold">{loggedInUser?.username || "Username"}</h2>
                     <p className="text-gray-500 flex items-center"><AtSign className="w-4 h-4 mr-2" />{loggedInUser?.email || "Email"}</p>
                     <p className="text-gray-500 flex items-center"><FileText className="w-4 h-4 mr-2" />Posts: {savedCodeList.length}</p>
                 </div>
@@ -112,7 +112,7 @@ const UserProfilePage = () => {
                                     <p><span className='font-bold'>Description : </span>{item.description}</p>
                                 </div>
                                 <div className='flex justify-center items-center gap-5'>
-                                    <Button onClick={() => navigate(`/compiler/${item._id}`)}>Edit Project</Button>
+                                    <Button onClick={() => navigate(`/compiler/${item._id}`)} variant="success">Edit Project</Button>
                                     <Button
                                         variant="destructive"
                                         onClick={() => handleDeleteCode(item._id)}
@@ -137,4 +137,4 @@ const UserProfilePage = () => {
     );
 };
 
-export default UserProfilePage;
+export default MyCodesPage;

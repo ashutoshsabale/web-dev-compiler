@@ -62,8 +62,8 @@ const Dropdown =  () => {
               <DropdownMenuItem onClick={()=> navigate("/profile")}>
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem disabled>
-                Settings
+              <DropdownMenuItem onClick={() => navigate("/my-codes")}>
+                My Codes
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

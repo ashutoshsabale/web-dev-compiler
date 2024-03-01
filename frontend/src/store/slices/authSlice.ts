@@ -24,7 +24,7 @@ const authSlice = createSlice({
         },
         updateLoggedInUser: (state, action: PayloadAction<boolean>) => {
             state.isLoggedIn = action.payload
-        }
+        },
     }
 
 })

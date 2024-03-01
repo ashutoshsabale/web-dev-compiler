@@ -5,9 +5,10 @@ import { Route, Routes } from 'react-router-dom'
 const Home = lazy(() => import("../pages/Home"))
 const Login = lazy(() => import("../pages/Login"))
 const Register = lazy(() => import("../pages/Register"))
-const Profile = lazy(() => import("../components/Profile"))
+const MyCodesPage = lazy(() => import("../pages/MyCodes"))
 const Compiler = lazy(() => import("../pages/Compiler"))
 const NotFound = lazy(() => import("../pages/NotFound"))
+const Profile = lazy(() => import("../pages/Profile"))
 
 function AllRoutes() {
     return (
@@ -16,6 +17,7 @@ function AllRoutes() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/my-codes" element={<MyCodesPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/compiler/:postId?" element={<Compiler />} />
                 <Route path="*" element={<NotFound name={""} />} />

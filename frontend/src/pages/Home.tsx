@@ -7,7 +7,7 @@ export default function Home() {
     const navigate = useNavigate()
     return (
         <div className="w-full grid-bg h-[calc(100dvh-60px)] text-white flex justify-center items-center flex-col gap-3">
-            <h1 className="text-6xl font-bold text-center">Idea to web developement</h1>
+            <h1 className="text-6xl font-extrabold text-center">The Web. Now. Yours.</h1>
             <p className=" text-gray-500 text-center text-lg my-3">
                 Compiler HTML, CSS, JavaScript Code on the go and share it with your
                 friends
