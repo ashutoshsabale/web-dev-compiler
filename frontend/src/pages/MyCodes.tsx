@@ -65,20 +65,24 @@ const MyCodesPage = () => {
 
     return (
         <div className="w-full h-full py-4 px-72">
-            <div className="flex items-center justify-center space-x-24 pb-6 border-b mb-6">
+            <div className="flex items-center justify-between px-10 space-x-24 pb-6 border-b mb-6">
+
+                <div><h1 className="text-6xl font-extrabold">My Posts</h1></div>
+                <div className='flex justify-center items-center gap-6'>
                 {
                     loggedInUser?.avatar ? (
-                        <div>
-                            <img src={loggedInUser.avatar} alt="" className="h-44 w-44 rounded-full select-none" />
+                        <div className='flex justify-center items-center'>
+                            <img src={loggedInUser.avatar} alt="" className="h-36 w-36 rounded-full select-none object-cover" />
                         </div>
                     ) : (
-                        <User className="w-44 h-44 text-indigo-500" />
+                        <User className="w-40 h-40 text-indigo-500" />
                     )
                 }
                 <div className='flex flex-col gap-2'>
                     <h2 className="text-white text-4xl font-extrabold">{loggedInUser?.username || "Username"}</h2>
                     <p className="text-gray-500 flex items-center"><AtSign className="w-4 h-4 mr-2" />{loggedInUser?.email || "Email"}</p>
                     <p className="text-gray-500 flex items-center"><FileText className="w-4 h-4 mr-2" />Posts: {savedCodeList.length}</p>
+                </div>
                 </div>
             </div>
 
@@ -102,17 +106,17 @@ const MyCodesPage = () => {
                     </div>
                 ) : (
                     savedCodeList && savedCodeList.map((item, i) => (
-                        <div key={i} className="bg-gray-900 shadow-xl rounded-lg p-4 flex flex-col justify-center items-center w-[440px] gap-3">
+                        <div key={i} className="bg-gray-900 shadow-2xl rounded-lg p-4 pb-3 flex flex-col justify-center items-center w-[440px] gap-3">
                             <div>
-                                <img src={item?.template} alt="template" className='w-[400px] rounded-md' />
+                                <img src={item?.template} alt="template" className='w-[400px] h-[250px] object-cover rounded-md' />
                             </div>
                             <div className='flex flex-col w-full gap-2'>
-                                <div className=''>
-                                    <p><span className='font-bold'>Title : </span>{item.title}</p>
-                                    <p><span className='font-bold'>Description : </span>{item.description}</p>
+                                <div className='border-b-2 pb-1'>
+                                    <p><span className='font-bold text-lg'>Title: </span>{item.title}</p>
+                                    <p><span className='font-bold'>Description: </span>{item.description}</p>
                                 </div>
                                 <div className='flex justify-center items-center gap-5'>
-                                    <Button onClick={() => navigate(`/compiler/${item._id}`)} variant="success">Edit Project</Button>
+                                    <Button onClick={() => navigate(`/compiler/${item._id}`)} variant="default">Edit Project</Button>
                                     <Button
                                         variant="destructive"
                                         onClick={() => handleDeleteCode(item._id)}
