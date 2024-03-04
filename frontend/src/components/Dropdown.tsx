@@ -58,7 +58,7 @@ const Dropdown = () => {
                     <DropdownMenuItem onClick={() => navigate("/profile")}>
                         Profile
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/my-codes")}>
+                    <DropdownMenuItem onClick={() => navigate(`/my-codes/${currentUser?.username}`)}>
                         My Codes
                     </DropdownMenuItem>
                 </DropdownMenuGroup>

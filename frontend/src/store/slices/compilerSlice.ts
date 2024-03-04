@@ -8,6 +8,7 @@ export interface CompilerSliceStateType{
     };
     title: string;
     description: string;
+    template: string;
     currentLanguage: "html" | "css" | "javascript";
 }
 
@@ -37,7 +38,8 @@ const initialState: CompilerSliceStateType = {
     },
     currentLanguage: "html",
     title: "",
-    description: ""
+    description: "",
+    template: ""
 }
 
 const compilerSlice = createSlice({
@@ -59,6 +61,9 @@ const compilerSlice = createSlice({
         updateDescription: (state, action: PayloadAction<string>) => {
             state.description = action.payload
         },
+        updateTemplate: (state, action: PayloadAction<string>) => {
+            state.template = action.payload
+        },
 
     }
 })
@@ -70,5 +75,6 @@ export const {
     updateCodeValue,
     updateFullCode,
     updateTitle,
-    updateDescription
+    updateDescription,
+    updateTemplate
 } = compilerSlice.actions

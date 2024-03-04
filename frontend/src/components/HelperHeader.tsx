@@ -24,26 +24,31 @@ import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { Edit, Loader2Icon, Save } from "lucide-react";
-
-
+import { Edit, ListCollapse, Loader2Icon, Save } from "lucide-react";
 
 function HelperHeader() {
     const dispatch = useDispatch();
     const defaultLanguage = useSelector((state: RootState) => state.compilerSlice.currentLanguage)
     const fullCode = useSelector((state: RootState) => state.compilerSlice.fullCode)
-    const title = useSelector((state: RootState) => state.compilerSlice.title)
-    const description = useSelector((state: RootState) => state.compilerSlice.description)
     const navigate = useNavigate();
+
+    const projectTitle = useSelector((state: RootState) => state.compilerSlice.title)
+    const projectDescription = useSelector((state: RootState) => state.compilerSlice.description)
+    const projectTemplate = useSelector((state: RootState) => state.compilerSlice.template)
 
     const { postId } = useParams();
 
     const [saveLoading, setSaveLoading] = useState<boolean>(false);
-    const [codeTitle, setCodeTitle] = useState<string>(postId! ? title : "");
-    const [codeDescription, setCodeDescription] = useState<string>(!postId ? "" : description)
+    const [codeTitle, setCodeTitle] = useState<string>(postId! ? projectTitle : "");
+    const [codeDescription, setCodeDescription] = useState<string>(!postId ? "" : projectDescription)
     const [templateFile, setTemplateFile] = useState<File | undefined>();
     const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+
     const isLoggedIn = useSelector((state: RootState) => state.authSlice.isLoggedIn);
+    const currentUser = useSelector((state: RootState) => state.authSlice.currentUser);
+    const [editAuthority] = useState<boolean>(currentUser?.savedCodes?.includes(postId!) ? true : false)
+
+    console.log(currentUser)
 
     const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -162,7 +167,7 @@ function HelperHeader() {
             <div className="__btn_container flex gap-2">
 
                 {/* Edit and save button dialog */}
-                {postId ? (
+                {(postId && editAuthority) ? (
                     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                         <DialogTrigger className="whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-green-500 shadow hover:bg-green-600 h-8 rounded-md px-3 text-xs flex justify-center items-center gap-1">
                             <Edit size={16} />{" "} Edit
@@ -286,37 +291,60 @@ function HelperHeader() {
 
                 {/* share button dialog */}
                 {postId &&
-                    <Dialog>
-                        <DialogTrigger className="whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs flex justify-center items-center gap-1"><Share1Icon />{" "} Share</DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle className="flex justify-center gap-2 items-center mb-2">
-                                    <CodeIcon height={25} width={25} />Share your code!
-                                </DialogTitle>
-                                <DialogDescription className="text-center">
-                                    <div className="flex justify-center gap-1">
-                                        <input
-                                            type="text"
-                                            disabled
-                                            value={window.location.href}
-                                            className=" w-full disable p-2 text-center rounded bg-slate-800 mb-2"
-                                        />
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => {
-                                                navigator.clipboard.writeText(window.location.href)
-                                                toast.success("Copied link to clipboard")
-                                            }
-                                            }
-                                        >
-                                            <CopyIcon />
-                                        </Button>
-                                    </div>
-                                    Share this link with others to collaborate.
-                                </DialogDescription>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>}
+                    <>
+                        <Dialog>
+                            <DialogTrigger className="whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs flex justify-center items-center gap-1"><Share1Icon />{" "} Share</DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle className="flex justify-center gap-2 items-center mb-2">
+                                        <CodeIcon height={25} width={25} />Share your code!
+                                    </DialogTitle>
+                                    <DialogDescription className="text-center">
+                                        <div className="flex justify-center gap-1">
+                                            <input
+                                                type="text"
+                                                disabled
+                                                value={window.location.href}
+                                                className=" w-full disable p-2 text-center rounded bg-slate-800 mb-2"
+                                            />
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(window.location.href)
+                                                    toast.success("Copied link to clipboard")
+                                                }
+                                                }
+                                            >
+                                                <CopyIcon />
+                                            </Button>
+                                        </div>
+                                        Share this link with others to collaborate.
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog>
+                            <DialogTrigger className="whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs flex justify-center items-center gap-1">
+                                <ListCollapse size={16} /> Project Details
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle className=" mb-2">
+                                        {projectTitle.toLocaleUpperCase()}
+                                    </DialogTitle>
+                                    <DialogDescription className="flex flex-col gap-3">
+                                        <div className="w-full flex justify-center">
+                                        <img src={projectTemplate} className="w-[400px] h-[250px]" alt="template" />
+                                        </div>
+                                        <div>
+                                            {projectDescription}
+                                        </div>
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
+                    </>
+                }
             </div>
 
             <div className="__tab_switcher flex items-center gap-1">

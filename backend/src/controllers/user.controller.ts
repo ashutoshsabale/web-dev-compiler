@@ -242,6 +242,18 @@ const getCurrentUser = asyncHandler( async (req: AuthRequest, res: Response) => 
     )
 })
 
+const getUser = asyncHandler ( async (req: Request, res: Response) => {
+    const {username} = req.params
+
+    const user = await User.findOne({ username }).select("-refreshToken -password")
+
+    if (!user) throw new ApiError(404, "User not found")
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Requested user fetched successfully"))
+})
+
 const updateAccountDetails = asyncHandler( async (req: AuthRequest, res: Response) => {
     const { username, email } = req.body //we will be getting new username/ email
 
@@ -296,6 +308,14 @@ const updateUserAvatar = asyncHandler( async (req: AuthRequest, res: Response) =
     )
 })
 
+const getAllUsers = asyncHandler( async (req: Request, res: Response) => {
+    const allUsers = await User.find( {} ).sort({ createdAt : -1 })
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200, allUsers, "All users fetched successfully"))
+})
+
 export {
     registerUser,
     loginUser,
@@ -305,4 +325,6 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
+    getAllUsers,
+    getUser
 }

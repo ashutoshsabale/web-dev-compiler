@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowDownIcon } from "@radix-ui/react-icons";
 import { useNavigate } from "react-router-dom";
 import "./styles/grid-bg.css"
-import PostCard from "@/components/Card";
+import PostCard from "@/components/AllCodePosts";
 
 const Home = () => {
     const navigate = useNavigate()

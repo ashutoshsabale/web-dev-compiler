@@ -139,12 +139,14 @@ const loadCode = asyncHandler ( async (req: Request, res: Response) => {
     )
 })
 
-const getMyCodes = asyncHandler( async (req: AuthRequest, res: Response) => {
-    const user = await User.findById(req.user?._id)
+const getUserCodes = asyncHandler( async (req: AuthRequest, res: Response) => {
+    const {username} = req.params
+
+    const user = await User.findOne({username})
 
     if(!user) throw  new ApiError(401, "User not found! Please login again.")
 
-   const ownerId = req.user?._id
+   const ownerId = user._id
 
     const savedCodes = await Code.find({ownerId})
 
@@ -189,7 +191,7 @@ export {
     saveCode,
     getAllCodes,
     loadCode,
-    getMyCodes,
+    getUserCodes,
     deleteCode,
     editCode,
 }

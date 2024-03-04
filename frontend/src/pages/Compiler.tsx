@@ -6,7 +6,7 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { updateDescription, updateFullCode, updateTitle } from "@/store/slices/compilerSlice";
+import { updateDescription, updateFullCode, updateTemplate, updateTitle } from "@/store/slices/compilerSlice";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -37,6 +37,8 @@ function Compiler() {
                 dispatch(updateFullCode(result?.data?.fullcode))
                 dispatch(updateTitle(result?.data?.title))
                 dispatch(updateDescription(result?.data?.description))
+                dispatch(updateTemplate(result?.data?.template))
+                console.log(result)
                 // toast.success('Code loaded successfully')
             }
 
