@@ -46,7 +46,7 @@ function HelperHeader() {
 
     const isLoggedIn = useSelector((state: RootState) => state.authSlice.isLoggedIn);
     const currentUser = useSelector((state: RootState) => state.authSlice.currentUser);
-    const [editAuthority] = useState<boolean>(currentUser?.savedCodes?.includes(postId!) ? true : false)
+    const [editAuthority, setEditAuthority] = useState<boolean>(currentUser?.savedCodes?.includes(postId!) ? true : false)
 
     console.log(currentUser)
 
@@ -137,6 +137,7 @@ function HelperHeader() {
 
             if (response.ok) {
                 setSaveLoading(false);
+                setEditAuthority(true);
                 setDialogOpen(false)
                 navigate(`/compiler/${result.data._id}`, { replace: true })
                 setCodeTitle("")
@@ -327,17 +328,19 @@ function HelperHeader() {
                             <DialogTrigger className="whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs flex justify-center items-center gap-1">
                                 <ListCollapse size={16} /> Project Details
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="">
                                 <DialogHeader>
                                     <DialogTitle className=" mb-2">
                                         {projectTitle.toLocaleUpperCase()}
                                     </DialogTitle>
-                                    <DialogDescription className="flex flex-col gap-3">
+                                    <DialogDescription asChild className="flex flex-col gap-3">
+                                        <div>
                                         <div className="w-full flex justify-center">
-                                        <img src={projectTemplate} className="w-[400px] h-[250px]" alt="template" />
+                                        <img src={projectTemplate} className="object-cover rounded-3xl w-full h-[250px]" alt="template" />
                                         </div>
                                         <div>
                                             {projectDescription}
+                                        </div>
                                         </div>
                                     </DialogDescription>
                                 </DialogHeader>
